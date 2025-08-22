@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +105,7 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
     'default': {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
 }
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
@@ -127,3 +128,4 @@ LOGGING = {
 }
 
 BASE_URL: str = f'https://'
+AUTH_USER_MODEL = 'user.User'
