@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from bs4 import BeautifulSoup
 from ingest.services.common import normalize_url
 
+URL = str
 
 @dataclass
 class ParsedCategory:
@@ -21,7 +22,13 @@ class ParsedCategory:
 class FeedCard:
     url: str
     title: Optional[str] = None
-    image_preview: Optional[str] = None
+    image_preview: Optional[URL] = None
+
+    def __post_init__(self):
+        if self.title:
+            self.title = self.title.strip()
+        if self.image_preview:
+            self.image_preview = normalize_url(self.image_preview)
 
     def __repr__(self):
         url = self.url

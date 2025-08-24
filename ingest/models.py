@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from ingest.choices import ArticleStatus
+
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -56,18 +58,14 @@ class Article(TimeStampedModel):
         related_name='articles',
     )
 
+    image_preview = models.URLField(null=True, blank=True)
     title = models.CharField(max_length=500, blank=True)
     published_at = models.DateTimeField(null=True, blank=True)
 
     status = models.CharField(
         max_length=32,
-        choices=[
-            ('NEW', 'NEW'),
-            ('FETCHED', 'FETCHED'),
-            ('PARSED', 'PARSED'),
-            ('ERROR', 'ERROR'),
-        ],
-        default='NEW',
+        choices=ArticleStatus.choices,
+        default=ArticleStatus.NEW,
     )
     error_note = models.TextField(blank=True)
 
