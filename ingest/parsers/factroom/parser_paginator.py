@@ -8,6 +8,7 @@ class PaginationInfo(TypedDict):
     current: int
     total: int
     next: Optional[int]
+    next_url: Optional[str]
 
 
 _HREF_PAGE_NUM_RE = re.compile(r"/page/(\d+)(?:/)?$")
@@ -25,7 +26,7 @@ def parse_pagination(html_page: BeautifulSoup | str) -> PaginationInfo:
 
     nav = html_page.select_one("div.navigation")
     if not nav:
-        return PaginationInfo(current=1, total=1, next=None)
+        return PaginationInfo(current=1, total=1, next=None, next_url=None)
 
     current_el = nav.select_one(".page-numbers.current")
     if current_el and current_el.get_text(strip=True).isdigit():
@@ -48,8 +49,24 @@ def parse_pagination(html_page: BeautifulSoup | str) -> PaginationInfo:
     total = max(total_candidates) if total_candidates else (current or 1)
     next_el = nav.select_one("a.next.page-numbers")
     if next_el:
-        next_num = _extract_page_num_from_href(next_el.get("href", ""))
+        next_url = next_el.get("href") or None
+        next_num = _extract_page_num_from_href(next_url or "") if next_url else None
     else:
-        next_num = current + 1 if current and total and current < total else None
+        if current and total and current < total:
+            next_num_guess = current + 1
+            a_num = None
+            for a in nav.select("a.page-numbers"):
+                if a.get_text(strip=True) == str(next_num_guess):
+                    a_num = a
+                    break
+            if a_num:
+                next_url = a_num.get("href") or None
+                next_num = next_num_guess
+            else:
+                next_url = None
+                next_num = next_num_guess
+        else:
+            next_url = None
+            next_num = None
 
-    return PaginationInfo(current=current, total=total, next=next_num)
+    return PaginationInfo(current=current, total=total, next=next_num, next_url=next_url)
