@@ -1,14 +1,8 @@
 from __future__ import annotations
-from typing import Optional, TypedDict
+from typing import Optional
 from bs4 import BeautifulSoup
 import re
-
-
-class PaginationInfo(TypedDict):
-    current: int
-    total: int
-    next: Optional[int]
-    next_url: Optional[str]
+from ingest.parsers.factroom.types import PaginationInfo
 
 
 _HREF_PAGE_NUM_RE = re.compile(r"/page/(\d+)(?:/)?$")
