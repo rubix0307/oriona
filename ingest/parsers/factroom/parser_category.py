@@ -1,30 +1,11 @@
 from typing import List, Optional, Callable, Dict, Set, Tuple
-from urllib.parse import urljoin, urlparse, urlunparse
+from urllib.parse import urlparse, urlunparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup
 
 from ingest.parsers.base import BaseHTTPParser
 from ingest.parsers.factroom.interfaces import CategoryParser, ParsedCategory
-from ingest.services.common import normalize_url, is_site_root
-
-
-def _clean_anchor_text(a: Tag) -> str:
-    '''
-    Return anchor text without <small> counters and <i> icons.
-    '''
-    parts: List[str] = []
-    for node in a.contents:
-        if isinstance(node, NavigableString):
-            txt = str(node).strip()
-            if txt:
-                parts.append(txt)
-        elif isinstance(node, Tag):
-            if node.name in ('small', 'i'):
-                continue
-            txt = node.get_text(strip=True)
-            if txt:
-                parts.append(txt)
-    return ' '.join(parts).strip()
+from ingest.services.common import normalize_url, is_site_root, clean_anchor_text, abs_url
 
 
 def _parent_from_url(child_url: str) -> Optional[str]:
@@ -77,24 +58,24 @@ class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
             if not parent_a:
                 continue
 
-            parent_name = _clean_anchor_text(parent_a)
-            parent_url = urljoin(self.base_url, parent_a.get('href') or '/')
+            parent_name = clean_anchor_text(parent_a)
+            parent_url = abs_url(self.base_url, parent_a.get('href') or '/')
             out.append(ParsedCategory(name=parent_name, url=parent_url, parent_url=None))
 
             for a in li.select('div.bigcat-nav-childs a.bigcat-nav-child'):
-                child_name = _clean_anchor_text(a)
+                child_name = clean_anchor_text(a)
                 out.append(
                     ParsedCategory(
                         name=child_name,
-                        url=urljoin(self.base_url, a.get('href') or '/'),
+                        url=abs_url(self.base_url, a.get('href') or '/'),
                         parent_url=parent_url,
                     )
                 )
 
         # Tail block: child-only categories without an explicit parent link
         for a in aside.select('li > div.bigcat-nav-childs a.bigcat-nav-child'):
-            child_name = _clean_anchor_text(a)
-            child_url = urljoin(self.base_url, a.get('href') or '/')
+            child_name = clean_anchor_text(a)
+            child_url = abs_url(self.base_url, a.get('href') or '/')
             parent_url = _parent_from_url(child_url)
             parent_url = normalize_url(parent_url) if parent_url else None
             if parent_url and is_site_root(parent_url, self.base_url):
@@ -125,11 +106,11 @@ class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
             if not href:
                 continue
 
-            name = _clean_anchor_text(a) or a.get_text(strip=True)
+            name = clean_anchor_text(a) or a.get_text(strip=True)
             parent_url = current_parent_url
             if is_site_root(current_parent_url, self.base_url):
                 parent_url = None
-            result.append(ParsedCategory(name=name, url=urljoin(self.base_url, href), parent_url=parent_url))
+            result.append(ParsedCategory(name=name, url=abs_url(self.base_url, href), parent_url=parent_url))
         return result
 
     def _walk_subcategories_parallel(self, initial: List[ParsedCategory]) -> List[ParsedCategory]:
