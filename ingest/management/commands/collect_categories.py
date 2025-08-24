@@ -41,7 +41,7 @@ class Command(BaseCommand):
         categories = parser.parse(main_html)
         self.stdout.write(self.style.NOTICE(f'[{slug}] Found {len(categories)} categories. Saving...'))
 
-        stats = CategoryPersistService().save(site, categories)
+        stats = CategoryPersistService(enable_new=False).save(site, categories)
 
         self.stdout.write(self.style.SUCCESS(
             f'[{slug}] Done. '
