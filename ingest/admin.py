@@ -52,11 +52,11 @@ class CategoryAdmin(ReadOnlyTimestampsMixin, admin.ModelAdmin):
 class ArticleAdmin(ReadOnlyTimestampsMixin, admin.ModelAdmin):
     list_display = (
         'title', 'site', 'category', 'status',
-        'published_at', 'discovered_at', 'last_seen_at', 'last_crawled_at',
+        'published_at', 'discovered_at', 'last_seen_at',
         'created_at', 'updated_at',
     )
     list_filter = ('site', 'status', 'published_at')
     search_fields = ('title', 'url')
     autocomplete_fields = ('site', 'category')
     date_hierarchy = 'published_at'
-    readonly_fields = ('discovered_at', 'last_seen_at', 'last_crawled_at') + ReadOnlyTimestampsMixin.readonly_fields
+    readonly_fields = ('discovered_at', 'last_seen_at',) + ReadOnlyTimestampsMixin.readonly_fields

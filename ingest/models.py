@@ -50,6 +50,11 @@ class Category(TimeStampedModel):
 class Article(TimeStampedModel):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='articles')
     url = models.URLField()
+    status = models.CharField(
+        max_length=32,
+        choices=ArticleStatus.choices,
+        default=ArticleStatus.NEW,
+    )
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
@@ -58,29 +63,32 @@ class Article(TimeStampedModel):
         related_name='articles',
     )
 
-    image_preview = models.URLField(null=True, blank=True)
     title = models.CharField(max_length=500, blank=True)
+    image_preview = models.URLField(null=True, blank=True)
+
     published_at = models.DateTimeField(null=True, blank=True)
-
-    status = models.CharField(
-        max_length=32,
-        choices=ArticleStatus.choices,
-        default=ArticleStatus.NEW,
-    )
-    error_note = models.TextField(blank=True)
-
     discovered_at = models.DateTimeField(default=timezone.now, editable=False)
+
     last_seen_at = models.DateTimeField(null=True, blank=True)
-    last_crawled_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         verbose_name = 'Article'
         verbose_name_plural = 'Articles'
         unique_together = [('site', 'url')]
-        indexes = [
-            models.Index(fields=['site', 'status']),
-            models.Index(fields=['site', 'last_crawled_at']),
-        ]
 
     def __str__(self):
         return self.url
+
+
+class ArticleContent(models.Model):
+    article = models.OneToOneField(Article, on_delete=models.CASCADE, related_name='content')
+
+    content_html = models.TextField(null=True, blank=True)
+    content_text = models.TextField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Article Content'
+        verbose_name_plural = 'Article Contents'
+
+    def __str__(self) -> str:
+        return f'content<{self.article_id}>'
