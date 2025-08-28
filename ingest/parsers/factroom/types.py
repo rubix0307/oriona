@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional, TypedDict
 from dataclasses import dataclass
 from ingest.services.common import normalize_url
@@ -39,3 +40,37 @@ class PaginationInfo(TypedDict):
     total: int
     next: Optional[int]
     next_url: Optional[str]
+
+@dataclass
+class ContentInfo:
+    content_html: Optional[str] = None
+    content_text: Optional[str] = None
+
+
+@dataclass
+class Breadcrumb:
+    name: str
+    url: str
+
+    def __post_init__(self):
+        if self.url:
+            self.url = normalize_url(self.url)
+
+
+
+@dataclass
+class ParsedArticle:
+    url: str
+    title: Optional[str] = None
+    published_at: Optional[datetime] = None
+    lead_image: Optional[str] = None
+    breadcrumbs: list[Breadcrumb] = None
+    content_html: Optional[str] = None
+    content_text: Optional[str] = None
+
+    def __post_init__(self):
+        if self.title:
+            self.title = self.title.strip()
+        if self.url:
+            self.url = normalize_url(self.url)
+
