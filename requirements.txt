@@ -9,7 +9,6 @@ click==8.2.1
 colorama==0.4.6
 distro==1.9.0
 Django==5.2.3
-django-grappelli==4.0.2
 django-stubs==5.2.2
 django-stubs-ext==5.2.2
 fake-useragent==2.2.0
