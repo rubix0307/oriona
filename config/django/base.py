@@ -13,6 +13,7 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
+    'unfold',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
