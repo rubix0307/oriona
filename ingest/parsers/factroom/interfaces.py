@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-from typing import Protocol
 
+from typing import Protocol, Iterable
 from bs4 import BeautifulSoup
 from ingest.parsers.factroom.types import ParsedCategory, FeedCard
 
