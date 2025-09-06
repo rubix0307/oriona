@@ -1,10 +1,10 @@
-from typing import List, Optional, Callable, Dict, Set, Tuple
+from typing import Optional, Callable
 from urllib.parse import urlparse, urlunparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
 from ingest.parsers.base import BaseHTTPParser
-from ingest.parsers.factroom.interfaces import CategoryParser, ParsedCategory
+from ingest.parsers.factroom.interfaces import ParsedCategory
 from ingest.services.common import normalize_url, is_site_root, clean_anchor_text, abs_url
 
 
@@ -24,7 +24,7 @@ def _parent_from_url(child_url: str) -> Optional[str]:
     return urlunparse(p._replace(path=parent_path, params='', query='', fragment=''))
 
 
-class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
+class FactroomCategoryParser(BaseHTTPParser):
     '''
     1) Parse left menu (parents + children).
     2) Recursively discover subcategories from category pages (nav.subcategory-list),
@@ -41,17 +41,17 @@ class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
         super().__init__(base_url, fetch_func=fetch_func)
         self.max_workers = max_workers
 
-    def parse(self, html: str) -> List[ParsedCategory]:
-        initial = self._parse_menu_categories(html)
+    def parse(self, url: str) -> list[ParsedCategory]:
+        soup = self.fetch_soup(url=url)
+        initial = self._parse_menu_categories(soup=soup)
         return self._walk_subcategories_parallel(initial)
 
-    def _parse_menu_categories(self, html: str) -> List[ParsedCategory]:
-        soup = BeautifulSoup(html, 'html.parser')
+    def _parse_menu_categories(self, soup: BeautifulSoup) -> list[ParsedCategory]:
         aside = soup.select_one('aside.left-sidebar')
         if not aside:
             return []
 
-        out: List[ParsedCategory] = []
+        out: list[ParsedCategory] = []
 
         for li in aside.select('ul.facts-navigation > li.bigcat-nav'):
             parent_a = li.select_one('a.bigcat-nav-link')
@@ -88,19 +88,19 @@ class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
                 )
             )
 
-        uniq: Dict[str, ParsedCategory] = {}
+        uniq: dict[str, ParsedCategory] = {}
         for c in out:
             uniq[c.url] = ParsedCategory(name=c.name, url=c.url, parent_url=c.parent_url)
 
         return list(uniq.values())
 
-    def _extract_subcategories_from_category_page(self, html: str, current_parent_url: str) -> List[ParsedCategory]:
+    def _extract_subcategories_from_category_page(self, html: str, current_parent_url: str) -> list[ParsedCategory]:
         soup = BeautifulSoup(html, 'html.parser')
         nav = soup.select_one('nav.subcategory-list')
         if not nav:
             return []
 
-        result: List[ParsedCategory] = []
+        result: list[ParsedCategory] = []
         for a in nav.select('a.subcategory-link'):
             href = a.get('href')
             if not href:
@@ -113,16 +113,16 @@ class FactroomCategoryParser(BaseHTTPParser, CategoryParser):
             result.append(ParsedCategory(name=name, url=abs_url(self.base_url, href), parent_url=parent_url))
         return result
 
-    def _walk_subcategories_parallel(self, initial: List[ParsedCategory]) -> List[ParsedCategory]:
-        by_url: Dict[str, ParsedCategory] = {}
+    def _walk_subcategories_parallel(self, initial: list[ParsedCategory]) -> list[ParsedCategory]:
+        by_url: dict[str, ParsedCategory] = {}
         for c in initial:
             key = normalize_url(c.url)
             by_url[key] = ParsedCategory(name=c.name, url=key, parent_url=c.parent_url)
 
-        visited: Set[str] = set()
-        frontier: List[ParsedCategory] = list(by_url.values())
+        visited: set[str] = set()
+        frontier: list[ParsedCategory] = list(by_url.values())
 
-        def _load_and_extract(cat: ParsedCategory) -> Tuple[str, List[ParsedCategory]]:
+        def _load_and_extract(cat: ParsedCategory) -> tuple[str, list[ParsedCategory]]:
             '''
             Fetch a category page and return (cat.url, discovered subcategories).
             Swallow exceptions to keep the pool running.
