@@ -40,6 +40,12 @@ class PaginationInfo(TypedDict):
     total: int
     next: Optional[int]
     next_url: Optional[str]
+@dataclass
+class PaginationInfo:
+    current: Optional[int] = None
+    total: Optional[int] = None
+    next: Optional[int] = None
+    next_url: Optional[str] = None
 
 @dataclass
 class ContentInfo:
