@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, TypedDict
 from dataclasses import dataclass
+from bs4 import BeautifulSoup
 from ingest.services.common import normalize_url
 
 URL = str
@@ -35,11 +36,11 @@ class FeedCard:
         image_preview = self.image_preview
         return f'<{self.__class__.__name__} {title=}, {url=},  {image_preview=}>'
 
-class PaginationInfo(TypedDict):
-    current: int
-    total: int
-    next: Optional[int]
-    next_url: Optional[str]
+@dataclass
+class ParsedFeed:
+    cards: list[FeedCard]
+    html_soup: BeautifulSoup
+
 @dataclass
 class PaginationInfo:
     current: Optional[int] = None
