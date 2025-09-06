@@ -27,8 +27,6 @@ class FeedCard:
     def __post_init__(self):
         if self.title:
             self.title = self.title.strip()
-        if self.image_preview:
-            self.image_preview = normalize_url(self.image_preview)
 
     def __repr__(self):
         url = self.url
@@ -64,7 +62,6 @@ class Breadcrumb:
             self.url = normalize_url(self.url)
 
 
-
 @dataclass
 class ParsedArticle:
     url: str
@@ -78,6 +75,4 @@ class ParsedArticle:
     def __post_init__(self):
         if self.title:
             self.title = self.title.strip()
-        if self.url:
-            self.url = normalize_url(self.url)
 
