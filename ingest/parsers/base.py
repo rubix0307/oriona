@@ -29,3 +29,7 @@ class BaseHTTPParser:
     def fetch_soup(self, url: str) -> BeautifulSoup:
         html = self.fetch(url=url)
         return BeautifulSoup(html, 'html.parser')
+
+
+class BaseParser(BaseHTTPParser):
+    ...
