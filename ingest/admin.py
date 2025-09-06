@@ -52,8 +52,7 @@ class CategoryAdmin(ReadOnlyTimestampsMixin, admin.ModelAdmin):
 class ArticleAdmin(ReadOnlyTimestampsMixin, admin.ModelAdmin):
     list_display = (
         'title', 'site', 'category', 'status',
-        'published_at', 'discovered_at', 'last_seen_at',
-        'created_at', 'updated_at',
+        'updated_at', 'created_at',
     )
     list_filter = ('site', 'status', 'published_at')
     search_fields = ('title', 'url')
