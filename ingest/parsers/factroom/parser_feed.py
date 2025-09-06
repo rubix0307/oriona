@@ -8,6 +8,7 @@ from ingest.parsers.factroom.parser_cards import (
     NewTextPostCardParser,
     PictureFactCardParser,
 )
+from ingest.parsers.factroom.types import URL, ParsedFeed
 from ingest.services.common import normalize_url, is_site_root
 
 
@@ -22,14 +23,14 @@ class FactroomFeedParser(BaseHTTPParser):
         fetch_func: Optional[Callable[[str], str]] = None,
         card_parsers: Optional[Sequence[FeedCardParser]] = None,
     ):
-        super().__init__(base_url, fetch_func=fetch_func)
+        super().__init__(fetch_func=fetch_func)
         self.card_parsers: list[FeedCardParser] = list(card_parsers) if card_parsers else [
             NewTextPostCardParser(),
             PictureFactCardParser(),
         ]
 
-    def parse(self, html: str) -> list[FeedCard]:
-        soup = BeautifulSoup(html, 'html.parser')
+    def parse(self, url: URL) -> ParsedFeed:
+        soup = self.fetch_soup(url=url)
 
         containers = soup.select('section.new-text-posts, div.feed-picture-fact-outer')
         scope = soup if not containers else BeautifulSoup(''.join(str(c) for c in containers), 'html.parser')

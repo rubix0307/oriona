@@ -6,8 +6,9 @@ from typing import List, Optional
 
 from bs4 import BeautifulSoup, Tag
 
+from ingest.models import Site
 from ingest.parsers.base import BaseHTTPParser
-from ingest.parsers.factroom.types import ParsedArticle, Breadcrumb, ContentInfo
+from ingest.parsers.factroom.types import ParsedArticle, Breadcrumb, ContentInfo, URL
 from ingest.services.common import (
     normalize_url,
     clean_text,
@@ -28,9 +29,12 @@ class FactroomArticleParser(BaseHTTPParser):
     '''
     available_tags = ['p', 'h2', 'h3', 'h4', 'h5', 'h6', 'li', 'blockquote']
 
-    def parse(self, url: str) -> ParsedArticle:
-        html = self.fetch(url=url)
-        soup = BeautifulSoup(html, 'html.parser')
+    def __init__(self):
+        super().__init__()
+        self.site = Site.objects.get(slug='factroom')
+
+    def parse(self, url: URL) -> ParsedArticle:
+        soup = self.fetch_soup(url=url)
         content = self._extract_content(soup)
         return ParsedArticle(
             url=normalize_url(url),
@@ -79,7 +83,7 @@ class FactroomArticleParser(BaseHTTPParser):
 
         for a in root.select('a[href]'):
             name = clean_anchor_text(a)
-            url = abs_url(self.base_url, a.get('href'))
+            url = abs_url(self.site.base_url, a.get('href'))
             if not url:
                 continue
             out.append(Breadcrumb(name=name, url=normalize_url(url)))
@@ -164,12 +168,12 @@ class FactroomArticleParser(BaseHTTPParser):
         for a in content.select('a[href]'):
             href = a.get('href')
             if href:
-                a['href'] = abs_url(self.base_url, href) or href
+                a['href'] = abs_url(self.site.base_url, href) or href
 
         for img in content.select('img[src]'):
             src = img.get('src')
             if src:
-                img['src'] = abs_url(self.base_url, src) or src
+                img['src'] = abs_url(self.site.base_url, src) or src
             if img.has_attr('srcset'):
                 img['srcset'] = self._normalize_srcset(img['srcset'])
 
@@ -206,6 +210,6 @@ class FactroomArticleParser(BaseHTTPParser):
                 continue
             url = segs[0]
             rest = ' '.join(segs[1:]) if len(segs) > 1 else ''
-            absu = abs_url(self.base_url, url) or url
+            absu = abs_url(self.site.base_url, url) or url
             parts.append((absu + (' ' + rest if rest else '')).strip())
         return ', '.join(parts)
