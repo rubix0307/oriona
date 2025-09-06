@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Optional, Sequence, Callable
 from bs4 import BeautifulSoup
+
+from ingest.models import Site
 from ingest.parsers.base import BaseHTTPParser
 from ingest.parsers.factroom.interfaces import FeedCardParser
 from ingest.parsers.factroom.parser_cards import (
@@ -19,7 +21,6 @@ class FactroomFeedParser(BaseHTTPParser):
     '''
     def __init__(
         self,
-        base_url: str,
         fetch_func: Optional[Callable[[str], str]] = None,
         card_parsers: Optional[Sequence[FeedCardParser]] = None,
     ):
@@ -28,6 +29,7 @@ class FactroomFeedParser(BaseHTTPParser):
             NewTextPostCardParser(),
             PictureFactCardParser(),
         ]
+        self.site = Site.objects.get(slug='factroom')
 
     def parse(self, url: URL) -> ParsedFeed:
         soup = self.fetch_soup(url=url)
@@ -39,12 +41,12 @@ class FactroomFeedParser(BaseHTTPParser):
         seen: set[str] = set()
 
         for parser in self.card_parsers:
-            for card in parser.parse_many(scope, self.base_url):
+            for card in parser.parse_many(scope, self.site.base_url):
                 if not card.url:
                     continue
 
                 key = normalize_url(card.url)
-                if is_site_root(key, self.base_url):
+                if is_site_root(key, self.site.base_url):
                     continue
 
                 if key in seen:
@@ -60,4 +62,4 @@ class FactroomFeedParser(BaseHTTPParser):
                 items.append(FeedCard(url=key, title=card.title, image_preview=card.image_preview))
                 seen.add(key)
 
-        return items
+        return ParsedFeed(cards=items, html_soup=soup)
