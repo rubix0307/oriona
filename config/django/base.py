@@ -22,6 +22,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'ingest',
+
+    'semantic',
+    'pgvector.django',
+
+
 ]
 
 MIDDLEWARE = [
