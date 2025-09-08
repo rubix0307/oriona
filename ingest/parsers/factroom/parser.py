@@ -41,7 +41,7 @@ class FactroomParser(BaseParser):
         while feed_url:
             pages += 1
 
-            feed = feed_parser.parse(url=start_url)
+            feed = feed_parser.parse(url=feed_url)
             cards += feed.cards
 
             if parse_depth and pages >= parse_depth:
