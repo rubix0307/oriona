@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 
 from .admin_actions import enable_categories, disable_categories
-from .models import Site, Category, Article
+from .models import Site, Category, Article, ArticleContent
 
 
 class ReadOnlyTimestampsMixin:
@@ -59,3 +59,18 @@ class ArticleAdmin(ReadOnlyTimestampsMixin, admin.ModelAdmin):
     autocomplete_fields = ('site', 'category')
     date_hierarchy = 'published_at'
     readonly_fields = ('discovered_at', 'last_seen_at',) + ReadOnlyTimestampsMixin.readonly_fields
+
+@admin.register(ArticleContent)
+class ArticleContentAdmin(admin.ModelAdmin):
+    list_display = (
+        'article_preview', 'content_preview',
+    )
+    search_fields = ('article__title',)
+
+    @admin.display(description='Preview')
+    def article_preview(self, obj: ArticleContent):
+        return f'<{obj.article.id}>: {obj.article.title}'
+
+    @admin.display(description='Preview')
+    def content_preview(self, obj: ArticleContent):
+        return obj.content_text[:50]
