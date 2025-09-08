@@ -1,3 +1,11 @@
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.http import require_GET
+from .search import SearchService
 
-# Create your views here.
+
+@require_GET
+def semantic_search(request):
+    search_service = SearchService().search(
+        query=request.GET.get('q', '')[:2000]
+    )
+    return JsonResponse({'results': search_service})
