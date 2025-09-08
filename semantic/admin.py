@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import IngestArticleEmbedding
 
-# Register your models here.
+
+@admin.register(IngestArticleEmbedding)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = (
+        'article', 'MODEL',
+    )
