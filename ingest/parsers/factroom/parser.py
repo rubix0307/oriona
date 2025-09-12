@@ -7,6 +7,7 @@ from ingest.parsers.factroom.parser_article import FactroomArticleParser
 from ingest.parsers.factroom.parser_feed import FactroomFeedParser
 from ingest.parsers.factroom.parser_paginator import parse_pagination
 from ingest.parsers.factroom.types import URL, ParsedArticle, FeedCard
+from ingest.parsers.interfaces import HasUrl
 
 
 class FactroomParser(BaseParser):
@@ -55,7 +56,7 @@ class FactroomParser(BaseParser):
         return cards
 
     @staticmethod
-    def parse_articles(cards: list[FeedCard]) -> list[ParsedArticle]:
+    def parse_articles(cards: Iterable[HasUrl]) -> list[ParsedArticle]:
         parsed_articles: list[ParsedArticle] = []
         if not cards:
             return parsed_articles
