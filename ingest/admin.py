@@ -74,4 +74,7 @@ class ArticleContentAdmin(admin.ModelAdmin):
 
     @admin.display(description='Content preview')
     def content_preview(self, obj: ArticleContent):
-        return obj.content_text[:50]
+        try:
+            return obj.content_text[:50]
+        except TypeError:
+            return ''
