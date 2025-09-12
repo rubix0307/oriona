@@ -13,7 +13,7 @@ class EmbeddingIngestService(EmbeddingService):
 
     @staticmethod
     def build_article_text(article: Article) -> str:
-        return article.title + '\n' + article.content.content_text
+        return (article.title or '') + '\n' + (article.content.content_text or '')
 
     @transaction.atomic
     def save_article_embedding(self, article: Article) -> IngestArticleEmbedding:
