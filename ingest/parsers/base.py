@@ -3,6 +3,7 @@ from typing import Optional, Callable
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
+from ingest.parsers.exceptions import HTTPError404
 
 
 class BaseHTTPParser:
@@ -23,6 +24,8 @@ class BaseHTTPParser:
 
         headers = {'User-Agent': self._ua}
         resp = requests.get(url, headers=headers, timeout=self._timeout)
+        if resp.status_code == 404:
+            raise HTTPError404(resp.url, resp.status_code, resp.text)
         resp.raise_for_status()
         return resp.text
 

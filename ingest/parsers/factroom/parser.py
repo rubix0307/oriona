@@ -1,7 +1,11 @@
 from typing import Optional, Iterable
 
-from ingest.models import Category, Site
+from requests.exceptions import HTTPError
+
+from ingest.choices import ArticleStatus
+from ingest.models import Category, Site, Article
 from ingest.parsers.base import BaseParser
+from ingest.parsers.exceptions import HTTPError404, ParsedArticleError
 from ingest.parsers.factroom.interfaces import DuplicateChecker
 from ingest.parsers.factroom.parser_article import FactroomArticleParser
 from ingest.parsers.factroom.parser_feed import FactroomFeedParser
@@ -39,19 +43,23 @@ class FactroomParser(BaseParser):
 
         feed_url = start_url
         pages = 0
+
         while feed_url:
-            pages += 1
+            try:
+                pages += 1
 
-            feed = feed_parser.parse(url=feed_url)
-            cards += feed.cards
+                feed = feed_parser.parse(url=feed_url)
+                cards += feed.cards
 
-            if parse_depth and pages >= parse_depth:
+                if parse_depth and pages >= parse_depth:
+                    break
+                if checker and not checker(cards=feed.cards):
+                    break
+
+                paginator = parse_pagination(soup=feed.html_soup)
+                feed_url = paginator.next_url
+            except HTTPError:
                 break
-            if checker and not checker(cards=feed.cards):
-                break
-
-            paginator = parse_pagination(soup=feed.html_soup)
-            feed_url = paginator.next_url
 
         return cards
 
@@ -63,9 +71,16 @@ class FactroomParser(BaseParser):
 
         parser = FactroomArticleParser()
         for card in cards:
-            parsed_articles.append(
-                parser.parse(url=card.url.strip('/'))
-            )
+            try:
+                article = parser.parse(url=card.url.strip('/'))
+                article.raise_for_status()
+            except (HTTPError404, ParsedArticleError) as ex:
+                Article.objects.filter(url=card.url).update(status=ArticleStatus.ERROR)
+                continue
+            except HTTPError as e:
+                continue
+
+            parsed_articles.append(article)
 
         return parsed_articles
 

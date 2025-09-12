@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Optional, TypedDict
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
+from ingest.parsers.exceptions import ParsedArticleError
 from ingest.services.common import normalize_url
 
 URL = str
@@ -76,3 +77,10 @@ class ParsedArticle:
         if self.title:
             self.title = self.title.strip()
 
+    @property
+    def ok(self) -> bool:
+        return all([self.url, self.content_html, self.content_text])
+
+    def raise_for_status(self):
+        if not self.ok:
+            raise ParsedArticleError()
