@@ -64,7 +64,7 @@ class FactroomParser(BaseParser):
         parser = FactroomArticleParser()
         for card in cards:
             parsed_articles.append(
-                parser.parse(url=card.url)
+                parser.parse(url=card.url.strip('/'))
             )
 
         return parsed_articles
