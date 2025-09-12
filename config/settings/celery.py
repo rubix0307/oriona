@@ -8,11 +8,13 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.django.local')
 
 app = Celery('config')
 app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks()
 app.autodiscover_tasks(['ingest.parsers.factroom'])
 
 
 QUEUES = {
     'INGEST_FACTROOM': {'name': 'ingest.factroom'},
+    'EMBEDDING_NEW_ARTICLES': {'name': 'ingest.semantic'},
 }
 QUEUE_DEFAULT_ARGS = {
     'x-max-length': 1,
@@ -21,6 +23,7 @@ QUEUE_DEFAULT_ARGS = {
 }
 app.conf.task_queues = (
     Queue(QUEUES['INGEST_FACTROOM']['name'], queue_arguments=QUEUE_DEFAULT_ARGS),
+    Queue(QUEUES['EMBEDDING_NEW_ARTICLES']['name'], queue_arguments=QUEUE_DEFAULT_ARGS),
 )
 
 app.conf.beat_schedule = {
@@ -28,5 +31,11 @@ app.conf.beat_schedule = {
         'task': 'parse_factroom_task',
         'schedule': timedelta(hours=6),
         'options': {'queue': QUEUES['INGEST_FACTROOM']['name']},
+    },
+    'embedding_articles': {
+        'task': 'embedding_new_articles_task',
+        'schedule': timedelta(hours=1),
+        'options': {'queue': QUEUES['EMBEDDING_NEW_ARTICLES']['name']},
+        'kwargs': {'limit': 1000},
     },
 }
