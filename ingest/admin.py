@@ -66,6 +66,8 @@ class ArticleContentAdmin(admin.ModelAdmin):
         'article_preview', 'content_preview',
     )
     search_fields = ('article__title',)
+    readonly_fields = ('article',)
+    ordering = ('-article__published_at','-id')
 
 
     @admin.display(description='Article preview')
