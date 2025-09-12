@@ -53,3 +53,5 @@ pgvector==0.4.1
 numpy==2.3.2
 torch==2.8.0
 sentence-transformers==5.1.0
+celery==5.5.3
+kombu==5.5.4
