@@ -67,10 +67,11 @@ class ArticleContentAdmin(admin.ModelAdmin):
     )
     search_fields = ('article__title',)
 
-    @admin.display(description='Preview')
+
+    @admin.display(description='Article preview')
     def article_preview(self, obj: ArticleContent):
         return f'<{obj.article.id}>: {obj.article.title}'
 
-    @admin.display(description='Preview')
+    @admin.display(description='Content preview')
     def content_preview(self, obj: ArticleContent):
         return obj.content_text[:50]
