@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'semantic',
     'pgvector.django',
 
+    'interest',
+
 
 ]
 
