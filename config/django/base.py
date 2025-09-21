@@ -135,3 +135,5 @@ LOGGING = {
 
 BASE_URL: str = f'https://'
 AUTH_USER_MODEL = 'user.User'
+
+INTEREST_API_URL = os.getenv('INTEREST_API_URL')
