@@ -7,7 +7,7 @@ from typing import List, Optional
 from bs4 import BeautifulSoup, Tag
 
 from ingest.models import Site
-from ingest.parsers.base import BaseHTTPParser
+from ingest.parsers.base import BaseParser
 from ingest.parsers.factroom.types import ParsedArticle, Breadcrumb, ContentInfo, URL
 from ingest.services.common import (
     normalize_url,
@@ -17,7 +17,7 @@ from ingest.services.common import (
 )
 
 
-class FactroomArticleParser(BaseHTTPParser):
+class FactroomArticleParser(BaseParser):
     '''
     Parses a Factroom article page into a ParsedArticle:
       - title

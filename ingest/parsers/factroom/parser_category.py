@@ -3,7 +3,7 @@ from urllib.parse import urlparse, urlunparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
-from ingest.parsers.base import BaseHTTPParser
+from ingest.parsers.base import BaseParser
 from ingest.parsers.factroom.interfaces import ParsedCategory
 from ingest.services.common import normalize_url, is_site_root, clean_anchor_text, abs_url
 
@@ -24,7 +24,7 @@ def _parent_from_url(child_url: str) -> Optional[str]:
     return urlunparse(p._replace(path=parent_path, params='', query='', fragment=''))
 
 
-class FactroomCategoryParser(BaseHTTPParser):
+class FactroomCategoryParser(BaseParser):
     '''
     1) Parse left menu (parents + children).
     2) Recursively discover subcategories from category pages (nav.subcategory-list),

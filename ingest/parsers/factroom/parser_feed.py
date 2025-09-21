@@ -3,7 +3,7 @@ from typing import Optional, Sequence, Callable
 from bs4 import BeautifulSoup
 
 from ingest.models import Site
-from ingest.parsers.base import BaseHTTPParser
+from ingest.parsers.base import BaseParser
 from ingest.parsers.factroom.interfaces import FeedCardParser
 from ingest.parsers.factroom.parser_cards import (
     FeedCard,
@@ -14,7 +14,7 @@ from ingest.parsers.factroom.types import URL, ParsedFeed
 from ingest.services.common import normalize_url, is_site_root
 
 
-class FactroomFeedParser(BaseHTTPParser):
+class FactroomFeedParser(BaseParser):
     '''
     Parses a feed page and returns a list of FeedCard items.
     Uses multiple card parsers to cover different templates.
