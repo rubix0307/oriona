@@ -16,7 +16,6 @@ class InterestService(BaseHTTP):
             fetch_func=kwargs.get('fetch_func'),
             user_agent=kwargs.get('user_agent'),
         )
-        self.BASE_URL = settings.INTEREST_API_URL
         self.timeout = timeout
 
     def get_requests(self, phrase: str, *,
@@ -36,7 +35,7 @@ class InterestService(BaseHTTP):
             payload['devices'] = devices
 
         headers = {'Content-Type': 'application/json'}
-        url = f'{self.BASE_URL.rstrip('/')}/v1/requests'
+        url = f'{settings.INTEREST_API_URL}/v1/requests'
 
         r = self.fetch(url, headers=headers, json=payload, method='post')
 
