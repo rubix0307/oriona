@@ -1,6 +1,7 @@
 from typing import Literal
 import requests
 from pydantic import ValidationError
+from requests import HTTPError
 
 from common.network import BaseHTTP
 from django.conf import settings
@@ -37,9 +38,10 @@ class InterestService(BaseHTTP):
         headers = {'Content-Type': 'application/json'}
         url = f'{settings.INTEREST_API_URL}/v1/requests'
 
-        r = self.fetch(url, headers=headers, json=payload, method='post')
-
         try:
+            r = self.fetch(url, headers=headers, json=payload, method='post')
             return TopRequestsResult.model_validate(r.json())
+        except HTTPError as e:
+            raise InterestAPIError(f'Failed to fetch {phrase} from {url}; {e=}') from e
         except ValidationError as e:
             raise InterestAPIError(f'Unexpected schema: {e}') from e
