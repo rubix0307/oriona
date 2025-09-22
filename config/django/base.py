@@ -136,4 +136,6 @@ LOGGING = {
 BASE_URL: str = f'https://'
 AUTH_USER_MODEL = 'user.User'
 
-INTEREST_API_URL = os.getenv('INTEREST_API_URL')
+INTEREST_API_URL = os.getenv('INTEREST_API_URL', '').rstrip('/')
+if not INTEREST_API_URL:
+    raise ValueError('INTEREST_API_URL must be set')
