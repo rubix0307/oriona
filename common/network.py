@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Callable, Literal
 import requests
-from fake_useragent import UserAgent
 from requests import Request
 
 from common.exceptions import HTTPError404
@@ -12,25 +11,19 @@ class BaseHTTP:
         self,
         fetch_func: Optional[Callable[[str], str]] = None,
         timeout: int = 15,
-        user_agent: Optional[str] = None,
+        headers: Optional[dict] = None,
     ):
         self._fetch_func = fetch_func
         self._timeout = timeout
-
-        self._ua = user_agent or UserAgent().random
+        self._headers = headers or {}
 
     def fetch(self, url: str, headers: Optional[dict] = None, method: Literal['get', 'post'] = 'get', **kwargs) -> Request:
-        if self._fetch_func:
-            return self._fetch_func(url)
-
-        if headers is None:
-            headers = {'User-Agent': self._ua}
-
         data = {
             'url': url,
-            'headers': headers,
             'timeout': self._timeout,
         }
+        if headers is None:
+             data.update({'headers': self._headers})
 
         resp = requests.request(method, **data, **kwargs)
 
