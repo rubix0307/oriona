@@ -3,7 +3,7 @@ from typing import Optional
 from celery import shared_task
 from ingest.choices import ArticleStatus
 from ingest.models import Article
-from ingest.parsers.factroom.duplicate_checker import are_cards_unique
+from ingest.parsers.checker import are_cards_unique
 from ingest.parsers.factroom.interfaces import DuplicateChecker
 from ingest.parsers.factroom.parser import FactroomParser
 from ingest.services.article_persist import ArticlePersistService

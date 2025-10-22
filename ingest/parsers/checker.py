@@ -1,10 +1,10 @@
 from typing import Iterable
 
 from ingest.models import Article
-from ingest.parsers.factroom.types import FeedCard
+from ingest.parsers.interfaces import HasUrl
 
 
-def are_cards_unique(cards: Iterable[FeedCard]) -> bool:
+def are_cards_unique(cards: Iterable[HasUrl]) -> bool:
     urls = [card.url for card in cards]
     if not urls:
         return True
