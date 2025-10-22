@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'pgvector.django',
 
     'interest',
+    'agent',
 
 
 ]

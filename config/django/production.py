@@ -10,6 +10,8 @@ CSRF_TRUSTED_ORIGINS = [
 BASE_URL: str = f'https://{HOST}'
 if not HOST:
     raise ValueError('Please set the HOST environment variable')
+AGENTS_BASE_URL = os.getenv('AGENTS_BASE_URL')
+AGENTS_TOKEN = os.getenv('AGENTS_TOKEN')
 
 from config.settings.sentry import *
 
