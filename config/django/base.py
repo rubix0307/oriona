@@ -28,8 +28,7 @@ INSTALLED_APPS = [
 
     'interest',
     'agent',
-
-
+    'article',
 ]
 
 MIDDLEWARE = [
