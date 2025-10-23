@@ -7,6 +7,11 @@ class Language(str, Enum):
     EN = 'en'
     RU = 'ru'
 
+    @classmethod
+    def choices(cls):
+        return [(lang.value, lang.name) for lang in cls]
+
+
 class ErrorLoc(BaseModel):
     loc: list[str | int]
     msg: str
