@@ -1,15 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
+from common.models import TimeStampedModel
 from ingest.choices import ArticleStatus
-
-
-class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
 
 
 class Site(TimeStampedModel):
