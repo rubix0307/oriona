@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.core.exceptions import ValidationError
@@ -53,9 +55,19 @@ class ArticleProcess(TimeStampedModel):
     agent_name = models.CharField(max_length=100)
     result = models.JSONField(blank=True)
 
+
+def article_image_upload_path(instance, filename):
+    now = datetime.date.today()
+    return f"articles/images/{now.year}/{now.month:02d}/{filename}"
+
 class Article(TimeStampedModel):
     idea = models.ForeignKey(ArticleIdea, on_delete=models.CASCADE)
 
+    image = models.ImageField(
+        upload_to=article_image_upload_path,
+        blank=True,
+        null=True,
+    )
     title = models.CharField(max_length=120)
     content = models.TextField()
 

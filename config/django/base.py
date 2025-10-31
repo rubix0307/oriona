@@ -13,7 +13,6 @@ ALLOWED_HOSTS = []
 # Application definition
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
-    'unfold',
     'django.contrib.auth',
     'django.contrib.admin',
     'django.contrib.contenttypes',
@@ -102,16 +101,15 @@ LOCALE_PATHS = [
 ]
 
 # Static files
-STATIC_HOST = os.environ.get('DJANGO_STATIC_HOST', '')
-STATIC_URL = STATIC_HOST + '/static/'
+STATIC_LOCATION = 'static'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 STORAGES = {
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': 'config.storage.StaticStorage',
     },
     'default': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'BACKEND': 'config.storage.MediaStorage',
     },
 }
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True

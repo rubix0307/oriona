@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="">
 <head>
@@ -9,15 +10,16 @@
     {% endblock %}
     {% block description %}
     {% endblock %}
-
+    <link href="{% static 'article/css/style.css' %}" rel="stylesheet">
+    <script src="{% static 'article/js/base.js' %}" defer></script>
 </head>
 
 <body>
-    {% block body %}
-        <main>
-            {% block main %}
-            {% endblock %}
-        </main>
-    {% endblock %}
+{% block body %}
+    <main>
+        {% block main %}
+        {% endblock %}
+    </main>
+{% endblock %}
 </body>
 </html>

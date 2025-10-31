@@ -10,9 +10,12 @@
 {% block main %}
     <article>
         <header>
-            {# <img src="https://f003.backblazeb2.com/file/oriona-test/kiss.webp" alt=""> #}
             <h1>{{ article.title }}</h1>
+            {% if article.image and article.image.url %}
+                <img src="{{ article.image.url }}" alt="">
+            {% endif %}
         </header>
         <section>{{ article.content|safe }}</section>
     </article>
+
 {% endblock %}

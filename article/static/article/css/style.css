@@ -1,0 +1,154 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-accent: #0077ff;
+  --color-border: #e0e0e0;
+
+
+  --font-body: 'Mulish', system-ui, sans-serif;
+  --font-heading: 'Alegreya', Georgia, serif;
+
+  --max-width: 700px;
+  --transition: 0.25s ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0d0d0d;
+    --color-text: #f2f2f2;
+    --color-accent: #3399ff;
+    --color-border: #2a2a2a;
+  }
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0 1rem;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+  line-height: 1.3;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+p {
+  margin: 1em 0;
+}
+
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover,
+a:focus {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+
+img, video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.25rem;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.section {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  body {
+    font-size: 18px;
+  }
+}
+
+
+figure {
+  border-radius: 1rem;
+  background-color: rgb(128 128 128 / 20%);
+  padding: 0.5rem 2rem;
+  margin: 0.5rem 0;
+
+  & > blockquote {
+    display: block;
+    width: 100%;
+    padding: 0.1rem;
+    margin: 0.1rem 0 0.5rem;
+  }
+
+  & > footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+
+    & > button {
+      cursor: pointer;
+      background-color: transparent;
+      border: none;
+      user-select: none;
+      color: var(--color-text);
+      text-decoration: underline;
+      min-width: 5rem;
+      text-align: left;
+      padding: 10px 0;
+    }
+    & > figcaption { opacity: .8; font-size: .9em; }
+  }
+}

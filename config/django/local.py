@@ -13,3 +13,6 @@ CELERY_WORKER_POOL = 'solo'
 
 AGENTS_BASE_URL = os.getenv('AGENTS_BASE_URL')
 AGENTS_TOKEN = os.getenv('AGENTS_TOKEN')
+
+
+from config.settings.s3 import *
