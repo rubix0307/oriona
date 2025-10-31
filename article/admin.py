@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ArticleIdea, ArticleProcess, Article
+from .models import ArticleIdea, ArticleAgentProcess, Article
 from . import actions
 
 
@@ -11,7 +11,7 @@ class ArticleIdeaAdmin(admin.ModelAdmin):
     actions = (actions.process_idea, )
 
 
-@admin.register(ArticleProcess)
+@admin.register(ArticleAgentProcess)
 class ArticleProcessAdmin(admin.ModelAdmin):
     list_display = ('idea', 'agent_name')
 

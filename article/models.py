@@ -50,7 +50,7 @@ class ArticleIdea(TimeStampedModel):
     def __str__(self):
         return f'{self.title} ({self.get_status_display()})'
 
-class ArticleProcess(TimeStampedModel):
+class ArticleAgentProcess(TimeStampedModel):
     idea = models.ForeignKey(ArticleIdea, on_delete=models.CASCADE, related_name='processes')
     agent_name = models.CharField(max_length=100)
     result = models.JSONField(blank=True)
