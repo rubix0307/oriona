@@ -72,7 +72,7 @@ class Article(TimeStampedModel):
     content = models.TextField()
 
 
-class ArticleTextAnalysis(TimeStampedModel):
+class ArticleWebTextAnalysis(TimeStampedModel):
     article = models.OneToOneField(Article, on_delete=models.CASCADE, related_name='web_text_analysis')
     uid = models.CharField(max_length=64, unique=True, primary_key=True)
 
@@ -91,7 +91,7 @@ class ArticleTextAnalysis(TimeStampedModel):
         return f'Analysis {self.uid} ({self.unique or "?"}%)'
 
     @classmethod
-    def from_service(cls, article_id: int, result: CheckResult) -> 'ArticleTextAnalysis':
+    def from_service(cls, article_id: int, result: CheckResult) -> 'ArticleWebTextAnalysis':
         seo = result.seo_check
         obj, _ = cls.objects.update_or_create(
             article_id=article_id,

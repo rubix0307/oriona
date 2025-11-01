@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ArticleIdea, ArticleAgentProcess, Article, ArticleTextAnalysis
+from .models import ArticleIdea, ArticleAgentProcess, Article, ArticleWebTextAnalysis
 from . import actions
 
 
@@ -20,6 +20,6 @@ class ArticleProcessAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', )
 
-@admin.register(ArticleTextAnalysis)
+@admin.register(ArticleWebTextAnalysis)
 class ArticleTextAnalysisAdmin(admin.ModelAdmin):
     list_display = ('article_id', 'unique' )

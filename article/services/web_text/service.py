@@ -1,16 +1,16 @@
 from typing import Iterable
-from article.models import Article, ArticleTextAnalysis
+from article.models import Article, ArticleWebTextAnalysis
 from article.services.web_text.core import WebTextServiceCore
 
 
 class WebTextService(WebTextServiceCore):
 
-    def analyze(self, article: Article) -> ArticleTextAnalysis:
+    def analyze(self, article: Article) -> ArticleWebTextAnalysis:
         submited_article = self.submit(article=article)
         article_text = self.get_result(submited_article=submited_article)
         return article_text
 
-    def analyze_many(self, articles: Iterable[Article]) -> list[ArticleTextAnalysis]:
+    def analyze_many(self, articles: Iterable[Article]) -> list[ArticleWebTextAnalysis]:
         submited_articles = self.submit_many(articles=articles)
         article_texts = self.get_results(submited_articles=submited_articles)
         return article_texts
